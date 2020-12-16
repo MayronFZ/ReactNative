@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
     View, Text, StyleSheet, SafeAreaView, StatusBar,
-        /*TextInput,*/ TouchableOpacity, FlatList, Animated, Modal, TextInput} from 'react-native';
+    TouchableOpacity, FlatList, Animated, Modal, TextInput, AsyncStorage
+} from 'react-native';
 
 import * as Animatable from 'react-native-animatable';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,16 +11,56 @@ import TaskList from './src/components/TaskList';
 const AnimatedBtn = Animatable.createAnimatableComponent(TouchableOpacity);
 
 export default function App() {
-    const [task, setTask] = useState([
-        { key: 1, task: 'Comprar pao' },
-        { key: 2, task: 'Dar aquela cagada' },
-        { key: 3, task: 'Tomar aquele cafezin' },
-        { key: 4, task: 'Matar a formiga' },
-        { key: 5, task: 'Tomar aquela vodka' },
-    ]);
-
-
+    const [task, setTask] = useState([]);
     const [open, setOpen] = useState(false);
+    const [input, setInput] = useState('');
+
+    useEffect(() => {
+        async function loadTasks() {
+            const taskStorage = await AsyncStorage.getItem('@task');
+
+
+            if (taskStorage) {
+                setTask(JSON.parse(taskStorage));
+            }
+        }
+
+
+
+        loadTasks();
+
+    }, []);
+
+  
+     useEffect(() => {
+
+        async function saveTasks(){
+            await AsyncStorage.setItem('@task', JSON.stringify(task));
+        }
+        
+        saveTasks();
+
+     }, [task]);
+
+
+    function handleAdd() {
+        if (input === '') return;
+
+        const data = {
+            key: input,
+            task: input
+        };
+
+        setTask([...task, data]);
+        setOpen(false),
+            setInput('');
+    }
+
+    const handleDelete = useCallback((data) => {
+        const find = task.filter(r => r.key !== data.key);
+        setTask(find);
+
+    })
 
     return (
         <SafeAreaView style={styles.container}>
@@ -31,13 +72,12 @@ export default function App() {
 
             </View >
 
-
             <FlatList
                 marginHorizontal={10}
                 showsHorizontalScrollIndicator={false}
                 data={task}
                 keyExtractor={(item) => String(item.key)}
-                renderItem={({ item }) => <TaskList data={item} />}
+                renderItem={({ item }) => <TaskList data={item} handleDelete={handleDelete} />}
             />
 
             <Modal animationType="slide" transparent={false} visible={open}>
@@ -49,15 +89,20 @@ export default function App() {
                         <Text style={styles.modalTitle} > Nova Tarefa </Text>
                     </View>
 
-                    <View style={styles.modalBody}>
-                        <TextInput 
-                        placeholder="O que precisa fazer hoje?"
-                        style={styles.input}
+                    <Animatable.View style={styles.modalBody} animation="fadeInUp" useNativeDriver>
+                        <TextInput
+                            multiline={true}
+                            placeholderTextColor="#747474"
+                            autoCorrect={false}
+                            placeholder="O que precisa fazer hoje?"
+                            value={input}
+                            onChangeText={(texto) => setInput(texto)}
+                            style={styles.input}
                         />
-                        <TouchableOpacity style={styles.handleAdd}>
+                        <TouchableOpacity style={styles.handleAdd} onPress={handleAdd}>
                             <Text style={styles.handleAddText}> Cadastrar </Text>
                         </TouchableOpacity>
-                    </View>
+                    </Animatable.View>
 
                 </SafeAreaView>
             </Modal>
@@ -111,25 +156,25 @@ const styles = StyleSheet.create({
         }
 
     },
-    modal:{
-        flex:1,
-        backgroundColor:'#171d31'
+    modal: {
+        flex: 1,
+        backgroundColor: '#171d31'
     },
-    modalHeader:{
+    modalHeader: {
         marginLeft: 10,
         marginTop: 20,
         flexDirection: 'row',
         alignItems: 'center'
     },
-    modalTitle:{
-        marginLeft:15,
+    modalTitle: {
+        marginLeft: 15,
         fontSize: 23,
         color: '#FFF'
     },
-    modalBody:{
+    modalBody: {
         marginTop: 15,
     },
-    input:{
+    input: {
         fontSize: 15,
         marginLeft: 10,
         marginRight: 10,
@@ -138,215 +183,21 @@ const styles = StyleSheet.create({
         padding: 9,
         height: 85,
         textAlignVertical: 'top',
-        color:'#000',
+        color: '#000',
         borderRadius: 5,
     },
-    handleAdd:{
+    handleAdd: {
         backgroundColor: '#FFF',
-        marginTop: 10, 
-        alignItems:  'center',
+        marginTop: 10,
+        alignItems: 'center',
         justifyContent: 'center',
         marginLeft: 10,
         marginRight: 10,
         height: 40,
         borderRadius: 5
     },
-    handleAddText:{
+    handleAddText: {
         fontSize: 20,
     }
 
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*export default function App() {
-    const [peso, setPeso] = useState('');
-    const [altura, setAltura] = useState('');
-
-function handleSubmit(){
-    const alt = altura / 100;
-    const imc = peso / (alt * alt);
-
-
-
-
-    if(imc < 18.5){
-    alert('Magreza! ' + imc.toFixed(2));
-    }else if(imc >= 18.5 && imc < 24.9){
-        alert('Peso Normal! ' + imc.toFixed(2));
-    }else if(imc >= 25.0 && imc < 29.9){
-        alert('Sobrepeso! ' + imc.toFixed(2));
-    }else if(imc >= 30.0 && imc < 39.9){
-        alert('Obesidade! ' + imc.toFixed(2));
-    }else if(imc >= 40){
-        alert('Obesidade Grave! ' + imc.toFixed(2));
-    }
-    if(altura < 140)
-    alert('Coloque sua altura em centimetros!')
-}
-    return (
-        <View style={styles.container} >
-
-            <Text style={styles.title}> Calcule seu IMC </Text>
-
-            <TextInput
-                style={styles.input}
-                value={peso}
-                onChangeText={ (peso) => setPeso(peso) }
-                placeholder="Peso (kg)"
-                keyboardType="numeric"
-
-            />
-
-
-
-            <TextInput
-                style={styles.input}
-                value={altura}
-                onChangeText={ (altura) => setAltura(altura) }
-                placeholder="Altura (cm)"
-                keyboardType="numeric"
-
-            />
-
-            <TouchableOpacity
-            style={styles.button}
-            onPress={handleSubmit}
-
-            >
-                <Text styles={styles.buttonText}>Calcular</Text>
-            </TouchableOpacity>
-
-        </View>
-
-
-    );
-
-
-}
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-
-    },
-    title: {
-        textAlign: 'center',
-        marginTop: 25,
-        fontSize: 30,
-
-    },
-    input:{
-        backgroundColor: '#121212',
-        borderRadius: 10,
-        margin: 15,
-        padding: 10,
-        color: '#FFF',
-        fontSize: 23,
-
-    },
-    button:{
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 15,
-        backgroundColor: '#41Aef4',
-        padding: 10,
-
-    },
-    buttonText:{
-        color: '#FFF',
-        fontSize: 25,
-    }
-
-
-});*/
