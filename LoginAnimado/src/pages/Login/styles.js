@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#121212'
+        backgroundColor: '#CCCC'
     },
     containerLogo: {
         flex: 1,
@@ -16,17 +16,9 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        width: '90%',
+        width: '95%',
         paddingBottom: 50,
-    },
-    input: {
-        backgroundColor: '#FFF',
-        width: '90%',
-        marginBottom: 30,
-        color: "#222",
-        fontSize: 18,
-        borderRadius: 7,
-        padding: 10,
+    
     },
     btnSubmit: {
         backgroundColor: '#359',
@@ -34,13 +26,42 @@ const styles = StyleSheet.create({
         height: 45,
         alignItems: 'center',
         justifyContent: 'center',
+        marginTop: 50,
+        borderRadius: 15,
 
     },
     submitText: {
         color: '#FFF',
         fontSize: 18,
     },
-   
+    inputArea:{
+        flexDirection: 'row',
+        alignItems:'center',
+        width:'98%',
+        elevation: 2,
+        paddingHorizontal: 10,
+        height: 40,
+        backgroundColor:'#FFF',
+        
+    },
+    inputPass:{
+        flexDirection: 'row',
+        alignItems:'center',
+        width:'98%',
+        elevation: 2,
+        paddingHorizontal: 10,
+        height: 40,
+        backgroundColor:'#FFF',
+        marginTop:'9%',
+    },
+    iconPass:{
+        paddingRight: 10,
+        
+    },
+    iconLogin:{
+        paddingRight: 6,
+        
+    }
 
 
 })

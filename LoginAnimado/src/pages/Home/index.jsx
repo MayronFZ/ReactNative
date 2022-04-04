@@ -1,31 +1,34 @@
 import React from 'react';
-import { MaterialIcons} from '@expo/vector-icons';
-import { View, Text,  ScrollView, Image, TouchableOpacity } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 
 import styles from './styles';
+import { TextInput } from 'react-native-gesture-handler';
 
-export default function Home() {
- return (
-   <View style={styles.container}>
-     <View style={styles.header}>
-       <Image
-       source={require('../../assets/banner.png')}
-       style={styles.image}
-       />
-       <View style={styles.textContainer}>
-         <Text style={styles.text}>TÊNIS</Text>
-         <Text style={styles.text}>-</Text>
-         <Text style={styles.text}>MASCULINO</Text>
-         <TouchableOpacity style={{position: 'absolute', right: 0, alignSelf:'center'}}>
-           <MaterialIcons
-            name="filter-list"
-            size={24}
-            color="black"
-           />
-         </TouchableOpacity>
-       </View>
-     </View>
+export default function Home({ navigation }) {
+  return (
+    <ScrollView showsVerticalScrollIndicator={false}
+      style={{ backgroundColor: '#FFF', }}>
 
-   </View>
+      <View style={styles.header}>
+        <View style={styles.inputArea}>
+          <Feather name="search" size={24} color="black" />
+          <TextInput
+            placeholder="O que está procurando?"
+            style={styles.input}
+          />
+
+        </View>
+        <TouchableOpacity style={styles.btnSubmit}
+
+          onPress={() => navigation.navigate('Tenis')}>
+          <Text style={styles.submitText}>Tênis</Text>
+
+        </TouchableOpacity>
+      </View>
+
+    </ScrollView>
+
   );
+
 }
